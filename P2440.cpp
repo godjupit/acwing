@@ -4,17 +4,8 @@ using namespace std;
 
 const int N = 1e6+10;
 int a[N];
+
 int n,m;
-
-int check(int mid){
-    int sum = 0;
-    for(int i = 0; i < n; i++){
-        sum += a[i] / mid;
-    }
-    return sum;
-}
-
-
 
 int main(){
     cin >> n >> m;
@@ -22,18 +13,28 @@ int main(){
         cin >> a[i];
     }
     sort(a,a+n);
-    int l = 0;
-    int r = a[n-1];
+    
     int mid = 0;
-    if(a[n-1] < 1) cout << "0";
-    else{
+    int q = 0;
+   
+    for(int i =0; i < m; i++){
+        int l = 0;
+        int r = n - 1;
+        scanf("%d",&q);
         while(l < r){
-            mid = (l + r + 1) / 2;
-            if(check(mid) >= m) l = mid;
-            else r = mid -1;
+            mid = (l + r ) / 2;
+            if(a[mid] >= q){
+                r = mid;
+            }else{
+                l = mid + 1;
+            }
+            
         }
-        cout << l;
+        if(a[l] == q) printf("%d ",l+1);
+        else printf("-1 ");
     }
     
+    
+   
     return 0;
 }
