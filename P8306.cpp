@@ -1,58 +1,80 @@
-#include<iostream>
-#include<algorithm>
-#include<string>
-#include<cstring>
+#include <iostream>
+#include <vector>
+#include <cstring>
 using namespace std;
 
+static char s[3000010];
 
-struct trie{
-    int tree[100000][26],cnt;
-    bool exist[100000];
+struct trie {
+    static const int MAXNODE = 100000;
+    int tree[MAXNODE][26];
+    bool exist[MAXNODE];
+    int cnt;
 
-    void insert(char *s, int l){
+    trie() : cnt(0) {
+        memset(tree,  0, sizeof(tree));
+        memset(exist, 0, sizeof(exist));
+    }
+
+    void insert(const char *s, int l) {
         int p = 0;
-        for(int i = 0; i < l; i++){
-            int num = s[i] - 'a';
-            if(!tree[i][num]){
-                tree[i][num] = ++cnt;
-                p = tree[i][num];
+        for (int i = 0; i < l; i++) {
+            int idx = s[i] - 'a';
+            if (tree[p][idx] == 0) {
+                tree[p][idx] = ++cnt;
             }
-            exist[p] = true;
+            p = tree[p][idx];
         }
+        exist[p] = true;
     }
 
-    int find(char *s, int l){
-
-        for(int i = 0; i < l; i++){
-            if(!tree[i][s[i] - 'a']){
-                return 0;
+    bool find(const char *s, int l) const {
+        int p = 0;
+        for (int i = 0; i < l; i++) {
+            int idx = s[i] - 'a';
+            if (tree[p][idx] == 0) {
+                return false;
             }
+            p = tree[p][idx];
         }
-
-        return tree[l-1][s[l-1] - 'a'];
+        return exist[p];
     }
-}Trie;
-
+} Trie;
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    trie T;
-
     int n;
-    static char buf[100000 + 5];  
+    cin >> n;
+    while (n--) {
+        int m, p;
+        cin >> m >> p;
 
-    for(int i = 0; i < n; i++){
-        // 限定最大输入长度，防止缓冲区溢出
-        scanf("%100000s", buf);
-        int len = strlen(buf);
-        T.insert(buf, len);
+        vector<trie> dict;
+        dict.reserve(m);
+
+        for (int i = 0; i < m; i++) {
+            scanf("%2999999s", s);
+            trie t;
+            int len = strlen(s);
+            t.insert(s, len);
+            dict.push_back(move(t));
+        }
+
+        long long ans = 0;
+        for (int i = 0; i < p; i++) {
+            scanf("%2999999s", s);
+            int len = strlen(s);
+            for (auto &t : dict) {
+                if (t.find(s, len)) {
+                    ans++;
+                }
+            }
+        }
+
+        cout << ans << "\n";
     }
-
-    // …后续查询或其他操作…
-
-  
 
     return 0;
 }
